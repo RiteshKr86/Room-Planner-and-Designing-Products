@@ -1,0 +1,204 @@
+{% include 'header.html' %}
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Room Planner and Layout Designer Management System</title>
+    <style>
+        body {
+            background-image: url("{% static 'images/background.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+            position: relative;
+        }
+        .container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            width: 80%;
+            max-width: 1200px;
+            margin-top: 20px;
+        }
+        .item {
+            margin: 10px;
+            width: 200px;
+            height: 150px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+        }
+        .item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        #searchInput {
+            position: absolute;
+            top: 90px;
+            right: 90px;
+            padding: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: right;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        nav {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .window {
+            width: 300px;
+            height: 200px;
+            background-color: rgba(255, 255, 255, 0.8);
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none;
+            z-index: 999;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            border-radius: 10px;
+        }
+        h1 {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+       <nav>
+           <a href="{% url 'homepage' %}">Home</a>
+           <a href="{% url 'design' %}">Design</a>
+           <a href="{% url 'about' %}">About</a>
+           <a href="{% url 'login' %}">Login</a>
+           <a href="{% url 'feedback' %}">Feedback</a>
+       </nav>
+    </header>
+
+    <h1>SPACEDESIGNMATE</h1>
+
+    <input type="text" id="searchInput" onkeypress="handleKeyPress(event)" placeholder="Search for projects...">
+
+    <!-- Window 1 -->
+    <div class="window" id="window1">
+        <!-- Content for window 1 -->
+        <h2>OUR WORK</h2>
+        <p>To create a room planner where users can design and layout their rooms.</p>
+    </div>
+
+    <!-- Window 2 -->
+    <div class="window" id="window2">
+        <!-- Content for window 2 -->
+        <h2>CONTACT US</h2>
+        <p>MOB- 12**45455 , MAIL- planner123@gmail.com.</p>
+    </div>
+
+    <div class="container">
+        <!-- Your photo items here -->
+        <div class="item" onclick="openWindow('window1')">
+           <img src="{% static 'images/photo1.jpg' %}" alt="photo1">
+        </div>
+        <div class="item" onclick="openWindow('window2')">
+            <img src="{% static 'images/photo2.jpg' %}" alt="photo2">
+        </div>
+        <!-- Add more items as needed -->
+    </div>
+
+    <!-- Upload image section -->
+    <div>
+        <h2>Upload Image Of Your Beautiful Home</h2>
+        <input type="file" id="imageUpload" accept="image/*">
+        <button onclick="uploadImage()">Upload</button>
+        <button onclick="removeImage()">Remove</button>
+        <div id="uploadedImageContainer"></div>
+    </div>
+
+    <script>
+        // Function to open window by ID
+        function openWindow(windowId) {
+            var window = document.getElementById(windowId);
+            window.style.display = "block";
+        }
+
+        // Function to close all windows
+        function closeWindows() {
+            var windows = document.getElementsByClassName("window");
+            for (var i = 0; i < windows.length; i++) {
+                windows[i].style.display = "none";
+            }
+        }
+
+        // Close windows when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains("window")) {
+                closeWindows();
+            }
+        }
+
+        // Handle key press event (Enter key)
+        function handleKeyPress(event) {
+            if (event.keyCode === 13) {
+                search();
+            }
+        }
+
+        // Search function to redirect to the login path
+        function search() {
+            var searchInput = document.getElementById("searchInput").value;
+            if (searchInput.trim() !== "") {
+                window.location.href = "{% url 'login' %}";
+            }
+        }
+
+        // Function to upload image
+        function uploadImage() {
+            var input = document.getElementById('imageUpload');
+            var file = input.files[0];
+            var reader = new FileReader();
+            reader.onload = function(e) {
+                var img = new Image();
+                img.src = e.target.result;
+                img.onload = function() {
+                    var container = document.getElementById('uploadedImageContainer');
+                    container.innerHTML = '';
+                    container.appendChild(img);
+                };
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Function to remove uploaded image
+        function removeImage() {
+            var container = document.getElementById('uploadedImageContainer');
+            container.innerHTML = '';
+        }
+    </script>
+</body>
+</html>

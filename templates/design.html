@@ -1,0 +1,390 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Room Design</title>
+    <!-- Slick Carousel CSS -->
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick.min.css"/>
+    <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/slick-carousel/1.8.1/slick-theme.min.css"/>
+    <style>
+    /* Add your CSS styles here */
+    body {
+        background-image:url("{% static 'images/smoky.jpg' %}");
+        background-size: cover;
+        background-position: center;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        height: 100vh;
+    }
+    .navbar {
+        background-color: #333;
+        overflow: hidden;
+    }
+    .navbar a {
+        float: left;
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 20px;
+        text-decoration: none;
+    }
+    .navbar a:hover {
+        background-color: #ddd;
+        color: black;
+    }
+    .navbar-tools {
+        float: right;
+    }
+    .room-selection {
+        display: flex;
+        justify-content: space-around;
+        margin-bottom: 20px;
+    }
+    .room-selection a {
+        text-decoration: none;
+        color: inherit;
+        display: block; /* Ensuring the anchor tags behave as blocks */
+        text-align: center; /* Center aligning the text */
+    }
+    .room-selection img {
+        width: 180px; /* Set a fixed width for the images */
+        height: 180px; /* Set a fixed height for the images */
+        object-fit: cover; /* Ensure the images cover the specified dimensions */
+        cursor: pointer;
+    }
+    .collection-selection {
+        display: none;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .collection-selection a {
+        text-decoration: none;
+        color: inherit;
+        display: block; /* Ensuring the anchor tags behave as blocks */
+        text-align: center; /* Center aligning the text */
+    }
+  .collection-selection {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+}
+.collection-selection a img {
+    max-width: 150px; /* Set maximum width */
+    max-height: 150px; /* Set maximum height */
+}
+
+    .furniture-selection {
+        display: none;
+        flex-wrap: wrap;
+        justify-content: space-around;
+    }
+    .furniture-selection img {
+        width: 200px; /* Set a fixed width for the images */
+        height: 200px; /* Set a fixed height for the images */
+        object-fit: cover; /* Ensure the images cover the specified dimensions */
+        cursor: pointer;
+    }
+    #cart {
+        margin-top: 20px;
+        border: 1px solid #ccc;
+        padding: 10px;
+        color: white;
+    }
+    #cart-items {
+        list-style-type: none;
+        padding: 0;
+    }
+    #cart-items li {
+        margin-bottom: 10px;
+    }
+    .total-buy-button {
+        background-color: #4CAF50;
+        border: none;
+        color: white;
+        padding: 10px 20px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin-top: 10px;
+        cursor: pointer;
+        border-radius: 5px;
+    }
+    .remove-button {
+        background-color: #f44336;
+        border: none;
+        color: white;
+        padding: 5px 10px;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 14px;
+        margin-right: 5px;
+        cursor: pointer;
+        border-radius: 3px;
+    }
+    #quantity {
+        color: blue;
+        padding: 5px 10px;
+        font-size: 14px;
+        border-radius: 3px;
+        border: 1px solid #ccc;
+    }
+    label[for="quantity"] {
+        color: red;
+    }
+    #paint-offer {
+        display: none;
+    }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <div class="navbar">
+        <a href="#" onclick="addToCartTools()" style="color: yellow;">FLAT 20% OFFER</a>
+        <a href="#" onclick="showPaintOffer()" style="color: yellow;">Paint Offer</a>
+        <a href="{% url 'login' %}">Home</a>
+        <a href="{% url 'about' %}">Services</a>
+    </div>
+
+    <h1><p style="color:white;">Select a room to design</p></h1>
+    <div class="room-selection">
+        <a href="#" onclick="showCollection('living-room')">
+            <img src="{% static 'images/living.jpg' %}" alt="Living Room">
+            <p style="color: white;">Living Room</p>
+        </a>
+        <a href="#" onclick="showCollection('bathroom')">
+            <img src="{% static 'images/bathroom.jpg' %}" alt="Bathroom">
+            <p style="color: white;">Bathroom</p>
+        </a>
+        <a href="#" onclick="showCollection('bedroom')">
+            <img src="{% static 'images/bedroom.jpg' %}" alt="Bedroom">
+            <p style="color: white;">Bedroom</p>
+        </a>
+        <!-- Add kitchen option -->
+        <a href="#" onclick="showCollection('kitchen')">
+            <img src="{% static 'images/kitchen.jpg' %}" alt="Kitchen">
+            <p style="color: white;">Kitchen</p>
+        </a>
+    </div>
+
+    <!-- Collections Container -->
+    <div id="collections-container">
+        <h2><p style="color:white;">COLLECTIONS</p></h2>
+        <!-- Collection Selection -->
+        <div id="collection-selection" class="collection-selection">
+            <!-- Collection items will be dynamically added here -->
+        </div>
+    </div>
+
+    <!-- Furniture Selection -->
+    <div id="furniture-selection" class="furniture-selection">
+        <!-- Furniture items will be dynamically added here -->
+    </div>
+
+    <!-- Cart section -->
+    <div id="cart">
+        <h2>Cart</h2>
+        <ul id="cart-items"></ul>
+        <p>Total: <span id="cart-total"></span></p>
+        <button class="total-buy-button" onclick="buyAllItems()">Total Buy</button>
+    </div>
+
+<script>
+    const collections = {
+        'living-room': ['Sofa', 'TV', 'Mirror'],
+        'bathroom': ['Bathtub', 'Sink', 'Toilet'],
+        'bedroom': ['Bed', 'Dresser', 'Nightstand'],
+        'kitchen': ['Table', 'Chairs', 'Refrigerator']
+    };
+
+    const products = {
+        'Sofa': [
+            { name: 'Sofa 1', price: 500, image: '{% static "images/sofa.jpg" %}' },
+            { name: 'Sofa 2', price: 600, image: '{% static "images/sofa2.jpg" %}' },
+            { name: 'Sofa 3', price: 600, image: '{% static "images/sofa3.jpg" %}' },
+            { name: 'Sofa 4', price: 600, image: '{% static "images/sofa4.jpg" %}' },
+            { name: 'Sofa 5', price: 600, image: '{% static "images/sofa5.jpg" %}' },
+            { name: 'Sofa 6', price: 600, image: '{% static "images/sofa6.jpg" %}' },
+            { name: 'Sofa 7', price: 600, image: '{% static "images/sofa7.jpg" %}' },
+            { name: 'Sofa 8', price: 600, image: '{% static "images/sofa8.jpg" %}' },
+            { name: 'Sofa 9', price: 600, image: '{% static "images/sofa9.jpg" %}' },
+            { name: 'Sofa 10', price: 600, image: '{% static "images/sofa10.jpg" %}' },
+            { name: 'Sofa 11', price: 600, image: '{% static "images/sofa11.jpg" %}' },
+            { name: 'Sofa 12', price: 600, image: '{% static "images/sofa12.jpg" %}' },
+            { name: 'Sofa 13', price: 600, image: '{% static "images/sofa13.jpg" %}' },
+            { name: 'Sofa 14', price: 600, image: '{% static "images/sofa14.jpg" %}' },
+        ],
+        'TV': [
+            { name: 'Samsung TV', price: 1000, image: '{% static "images/tv.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv1.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv2.jpg" %}' },
+            { name: ' TV', price: 1000, image: '{% static "images/tv3.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv4.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv5.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv6.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv7.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv8.jpg" %}' },
+            { name: ' TV', price: 1000, image: '{% static "images/tv9.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv10.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv11.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv12.jpg" %}' },
+            { name: 'TV', price: 1000, image: '{% static "images/tv13.jpg" %}' }
+        ],
+        'Mirror': [
+            { name: 'Wall Mirror', price: 200, image: '{% static "images/Mirror.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr1.jpg" %}' },
+            { name: 'Wall Mirror', price: 200, image: '{% static "images/mr2.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr3.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr4.jpg" %}' },
+              { name: 'Wall Mirror', price: 200, image: '{% static "images/mr5.jpg" %}' },
+              { name: 'Wall Mirror', price: 200, image: '{% static "images/mr6.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr7.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr8.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr9.jpg" %}' },
+              { name: 'Wall Mirror', price: 200, image: '{% static "images/mr10.jpg" %}' },
+              { name: 'Wall Mirror', price: 200, image: '{% static "images/mr11.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr12.jpg" %}' },
+             { name: 'Wall Mirror', price: 200, image: '{% static "images/mr13.jpg" %}' },
+        ],
+        'Bathtub': [
+            { name: 'Modern Bathtub', price: 800, image: '{% static "images/bathtub.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b1.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b2.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b3.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b4.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b5.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b6.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b7.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b8.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b9.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b10.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b11.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b12.jpg" %}' },
+            { name: 'BATHTUB', price: 200, image: '{% static "images/b13.jpg" %}' }
+        ],
+        'Sink': [
+            { name: 'Bathroom Sink', price: 150, image: '{% static "images/sink1.jpg" %}' }
+        ],
+        'Toilet': [
+            { name: 'Toilet Bowl', price: 300, image: '{% static "images/toilet.jpg" %}' }
+        ],
+        'Bed': [
+            { name: 'King Size Bed', price: 700, image: '{% static "images/bed.jpg" %}' }
+        ],
+        'Dresser': [
+            { name: 'Wooden Dresser', price: 400, image: '{% static "images/dresser.jpg" %}' }
+        ],
+        'Nightstand': [
+            { name: 'Nightstand', price: 100, image: '{% static "images/nightstand.jpg" %}' }
+        ],
+        'Table': [
+            { name: 'Kitchen Table', price: 300, image: '{% static "images/table.jpg" %}' }
+        ],
+        'Chairs': [
+            { name: 'Dining Chairs', price: 150, image: '{% static "images/chairs.jpg" %}' }
+        ],
+        'Refrigerator': [
+            { name: 'Double Door Refrigerator', price: 900, image: '{% static "images/refrigerator.jpg" %}' }
+        ]
+    };
+
+    function showCollection(room) {
+        const collectionSelection = document.getElementById('collection-selection');
+        const productSelection = document.getElementById('furniture-selection');
+
+        collectionSelection.innerHTML = '';
+        productSelection.innerHTML = '';
+
+        collections[room].forEach(collection => {
+            const collectionItem = document.createElement('a');
+            collectionItem.href = '#';
+            collectionItem.innerHTML = `
+                <img src="{% static 'images/' %}${collection.toLowerCase()}.jpg" alt="${collection}">
+                <p style="color: white;">${collection}</p>
+            `;
+            collectionItem.onclick = () => showProducts(collection);
+            collectionSelection.appendChild(collectionItem);
+        });
+
+        collectionSelection.style.display = 'flex';
+        productSelection.style.display = 'none';
+    }
+
+    function showProducts(collection) {
+        const productSelection = document.getElementById('furniture-selection');
+        productSelection.innerHTML = '';
+
+        products[collection].forEach(product => {
+            const productItem = document.createElement('div');
+            productItem.classList.add('product');
+            productItem.innerHTML = `
+                <div>
+                    <img src="${product.image}" alt="${product.name}" width="200" height="200">
+                    <p style="color: white;">${product.name}</p>
+                    <p style="color: white;">Price: $${product.price}</p>
+                </div>
+                <button onclick="addToCart('${product.name}', ${product.price})">Add to Cart</button>
+            `;
+            productSelection.appendChild(productItem);
+        });
+
+        productSelection.style.display = 'flex';
+    }
+
+    const cartItems = {};
+
+    function addToCart(name, price) {
+        if (cartItems[name]) {
+            cartItems[name].quantity += 1;
+        } else {
+            cartItems[name] = { price: price, quantity: 1 };
+        }
+        showCart();
+    }
+
+    function showCart() {
+        const cartItemsList = document.getElementById('cart-items');
+        cartItemsList.innerHTML = '';
+        let total = 0;
+        Object.keys(cartItems).forEach(name => {
+            const item = cartItems[name];
+            const li = document.createElement('li');
+            li.innerHTML = `${name} - ${item.quantity} x $${item.price}
+                            <button class="remove-button" onclick="removeFromCart('${name}')">Remove</button>`;
+            cartItemsList.appendChild(li);
+            total += item.price * item.quantity;
+        });
+        document.getElementById('cart-total').innerText = `$${total}`;
+    }
+
+    function removeFromCart(name) {
+        delete cartItems[name];
+        showCart();
+    }
+
+    function buyAllItems() {
+        alert('Items bought!');
+        // Clear cartItems
+        for (const key in cartItems) {
+            delete cartItems[key];
+        }
+        showCart();
+        // Redirect to details page
+        window.location.href = "{% url 'details' %}";
+    }
+
+    function addToCartTools() {
+        alert('Tools added to cart!');
+    }
+
+    function showPaintOffer() {
+        const paintOffer = document.getElementById('paint-offer');
+        paintOffer.style.display = 'block';
+    }
+</script>
+
+</html>

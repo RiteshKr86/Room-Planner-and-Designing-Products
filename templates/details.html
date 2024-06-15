@@ -1,0 +1,321 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Address & Payment Details</title>
+    <style>
+        /* Add your CSS styles here */
+        body {
+            background-image: url("{% static 'images/pay1.jpg' %}");
+            background-size: cover;
+            background-position: center;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+        .container {
+            width: 50%;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        form {
+            max-width: 500px;
+            margin: 0 auto;
+            background-color: #fff;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: bold;
+            color: #333;
+        }
+        input[type="text"],
+        input[type="email"],
+        input[type="tel"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        input[type="submit"] {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            display: block;
+            width: 100%;
+            margin-top: 20px;
+        }
+        .notification {
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: center;
+        }
+        .success {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .error {
+            background-color: #f44336;
+            color: white;
+        }
+        .warning {
+            background-color: #ffcc00;
+            color: #333;
+        }
+        .card-details {
+            display: none;
+        }
+        #loading {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+        }
+        /* Shipping Animation */
+        .shipping-container {
+            text-align: center;
+            position: relative;
+        }
+        .stop {
+            width: 20px;
+            height: 20px;
+            background-color: red;
+            border-radius: 50%;
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+        .stop.green {
+            background-color: green;
+        }
+        .line {
+            position: absolute;
+            background-color: black;
+            width: 2px;
+            height: 10cm;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 0;
+        }
+        .truck {
+            position: absolute;
+            font-size: 40px;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .phone-container {
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+        .phone-number {
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .phone-text {
+            margin-top: 10px;
+        }
+         nav {
+            background-color: purple; /* Changed to blue */
+            color: white;
+            padding: 10px;
+        }
+
+        nav ul {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        nav ul li {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+ <nav>
+    <ul>
+        <a href="{% url 'about' %}" style="color: black; margin-right: 20px; font-size: 20px;">Services</a>
+        <a href="{% url 'about' %}" style="color: black; margin-right: 20px; font-size: 20px;">About</a>
+    </ul>
+</nav>
+
+    <div class="container">
+        <h1>Enter Address & Payment Details</h1>
+        <form id="payment-form">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" name="fullname" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="phone">Phone Number:</label>
+            <input type="tel" id="phone" name="phone" pattern="[0-9]{10}" required>
+
+            <label for="address">Address:</label>
+            <textarea id="address" name="address" rows="4" required></textarea>
+
+            <label for="payment-method">Payment Method:</label>
+            <select id="payment-method" name="payment-method" required>
+                <option value="">Select Payment Method</option>
+                <option value="credit-card">Credit Card</option>
+                <option value="debit-card">Debit Card</option>
+                <option value="phonepe">PhonePe</option>
+                <option value="gpay">Google Pay</option>
+                <option value="paypal">PayPal</option>
+                <!-- Add more payment options if needed -->
+            </select>
+
+            <!-- Warning message for non-credit/debit card payment methods -->
+            <div id="warning-message" class="notification warning" style="display: none;">
+                Note: Payment methods other than Credit Card or Debit Card may not be available at the moment.
+            </div>
+
+            <!-- Card details -->
+            <div class="card-details" id="card-details">
+                <label for="card-number">Card Number:</label>
+                <input type="text" id="card-number" name="card-number">
+
+                <label for="expiry-date">Expiry Date:</label>
+                <input type="text" id="expiry-date" name="expiry-date" placeholder="MM/YY">
+
+                <label for="cvv">CVV:</label>
+                <input type="text" id="cvv" name="cvv">
+            </div>
+
+            <input type="submit" value="Proceed to Payment">
+        </form>
+
+        <div id="notification" class="notification" style="display: none;"></div>
+
+        <div id="loading">
+            <img src="https://cdnjs.cloudflare.com/ajax/libs/galleriffic/2.0.1/css/loader.gif" alt="Loading...">
+            <p>Please wait while we process your payment...</p>
+        </div>
+    </div>
+
+    <!-- Shipping Animation -->
+    <div class="container">
+        <div class="shipping-container" id="shipping-container" style="display: none;">
+            <div class="stop" id="stop1"></div>
+            <div class="line"></div>
+            <div class="stop green" id="stop2"></div>
+            <div class="truck" id="truck">🚚</div>
+            <div class="delivery-time" id="delivery-time" style="position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%);"></div>
+        </div>
+    </div>
+
+    <!-- Phone Contact -->
+    <div class="phone-container">
+        <p class="phone-number">Call: <a href="tel:999999999">999999999</a></p>
+        <p class="phone-text">Contact us if you encounter any problems.</p>
+    </div>
+
+    <script>
+        document.getElementById('payment-method').addEventListener('change', function() {
+            var selectedPaymentMethod = this.value;
+            var cardDetails = document.getElementById('card-details');
+            var warningMessage = document.getElementById('warning-message');
+
+            if (selectedPaymentMethod === 'credit-card' || selectedPaymentMethod === 'debit-card') {
+                cardDetails.style.display = 'block';
+                warningMessage.style.display = 'none';
+            } else {
+                cardDetails.style.display = 'none';
+                warningMessage.style.display = 'block';
+            }
+        });
+
+        document.getElementById('payment-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent form submission
+
+            // Perform form validation
+            var fullname = document.getElementById('fullname').value;
+            var email = document.getElementById('email').value;
+            var phone = document.getElementById('phone').value;
+            var address = document.getElementById('address').value;
+            var paymentMethod = document.getElementById('payment-method').value;
+            var cardNumber = document.getElementById('card-number').value;
+            var expiryDate = document.getElementById('expiry-date').value;
+            var cvv = document.getElementById('cvv').value;
+
+            if (!fullname || !email || !phone || !address || !paymentMethod) {
+                showNotification('error', 'Please fill out all fields.');
+                return;
+            }
+
+            if ((paymentMethod === 'credit-card' || paymentMethod === 'debit-card') && (!cardNumber || !expiryDate || !cvv)) {
+                showNotification('error', 'Please fill out all card details.');
+                return;
+            }
+
+            // Hide form and show loading animation
+            document.getElementById('payment-form').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            // Simulate processing with a delay
+            setTimeout(function() {
+                // Hide loading animation
+                document.getElementById('loading').style.display = 'none';
+
+                // Show shipping animation
+                document.getElementById('shipping-container').style.display = 'block';
+                document.getElementById('stop2').classList.add('green');
+                document.getElementById('delivery-time').textContent = 'continue your shopping .';
+            }, 5000); // 5 seconds delay for demonstration
+
+            // Simulate delivery after 10 seconds
+            setTimeout(function() {
+                // Update shipping status
+                document.getElementById('stop1').innerHTML = '🚚 Order Shipped';
+                document.getElementById('delivery-time').textContent = '';
+            }, 10000); // 10 seconds delay for delivery
+
+            // Show success message
+            showNotification('success', 'Payment successful. Your order is being processed.');
+        });
+
+        function showNotification(type, message) {
+            var notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.className = 'notification ' + type;
+            notification.style.display = 'block';
+
+            // Hide notification after 3 seconds
+            setTimeout(function() {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>

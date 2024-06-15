@@ -1,0 +1,78 @@
+{% include 'header.html' %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Design</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        canvas {
+            border: 2px solid #333;
+            margin-top: 20px;
+        }
+
+        .notification {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 1;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<main>
+    <canvas id="canvas"></canvas>
+</main>
+
+<!-- Notification banner -->
+<div class="notification" id="notification">
+    Saved successfully!
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('canvas');
+        const context = canvas.getContext('2d');
+
+        // Retrieve the image data from sessionStorage
+        const imageData = sessionStorage.getItem('canvasImage');
+
+        if (imageData) {
+            const img = new Image();
+            img.onload = function() {
+                canvas.width = img.width;
+                canvas.height = img.height;
+                context.drawImage(img, 0, 0);
+
+                // Show notification
+                const notification = document.getElementById('notification');
+                notification.style.display = 'block';
+
+                // Hide notification after 3 seconds
+                setTimeout(() => {
+                    notification.style.display = 'none';
+                }, 3000);
+            };
+            img.src = imageData;
+
+            // Clear the sessionStorage item
+            sessionStorage.removeItem('canvasImage');
+        }
+    });
+</script>
+
+</body>
+</html>

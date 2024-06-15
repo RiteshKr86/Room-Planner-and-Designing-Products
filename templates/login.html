@@ -1,0 +1,107 @@
+{% include 'header.html' %}
+{% load static %}
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="{% static 'css/login.css' %}">
+    <style>
+        body {
+            background-color: #f2f2f2; /* Set a fallback background color */
+            background-image: url('{% static 'images/logback.jpg' %}'); /* Set the background image */
+            background-size: cover;
+            background-position: center;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+        }
+
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            text-align: right;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        nav {
+            display: inline-block;
+            margin-top: 10px;
+        }
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            padding: 0 15px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<header>
+    <div class="container">
+        </div>
+        <nav>
+            <a href="{% url 'homepage' %}">Home</a>
+            <a href="{% url 'design' %}">Design</a>
+            <a href="{% url 'about' %}">About</a>
+            <a href="{% url 'login' %}">Login</a>
+            <a href="{% url 'feedback' %}">Feedback</a>
+        </nav>
+    </div>
+</header>
+
+<section class="event_part section_padding">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 bg-light login-container">
+                <h1>Login</h1>
+
+                <form id="loginForm" method="post" action="{% url 'login_view' %}">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>Email address</label>
+                        <input type="email" name="username" class="form-control" aria-describedby="emailHelp"
+                               placeholder="Enter email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" class="form-control" placeholder="Password" name="password">
+                    </div>
+                    <div class="form-group" align="center">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+
+                <div class="form-group" align="center">
+                    <p>Don't have an account? <a href="{% url 'signup' %}">Sign up</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.getElementById("loginForm").addEventListener("submit", function(event) {
+        event.preventDefault(); // Prevent the form from submitting
+
+        // Perform any form validation here if needed
+
+        // Redirect to the desired page
+        window.location.href = "{% url 'design' %}";
+    });
+</script>
+
+</body>
+</html>

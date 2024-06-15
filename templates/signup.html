@@ -1,0 +1,104 @@
+{% include 'header.html' %}
+{% load static %} <!-- Load the static template tag -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            background-image: url('{% static 'images/happy.jpg' %}');
+            background-size: cover;
+            background-position: center;
+        }
+
+        .signup-container {
+            max-width: 300px;
+            margin: 100px auto;
+            background-color: rgba(255, 255, 255, 0.8); /* Adjust the background color opacity */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .signup-container h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .signup-container label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+        }
+
+        .signup-container input {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        .signup-container button {
+            background-color: #4caf50;
+            color: #fff;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .signup-container button:hover {
+            background-color: #45a049;
+        }
+
+        .login-link {
+            margin-top: 10px;
+            display: block;
+            color: #333;
+        }
+
+        .login-link:hover {
+            color: #4caf50;
+        }
+    </style>
+</head>
+<body>
+
+<div class="signup-container">
+    <h2>Sign Up</h2>
+    <form method="post" action="{% url 'registration_view' %}">
+        {% csrf_token %}
+
+        <div class="form-group">
+          <label>Email address</label>
+          <input type="email" name="email" class="form-control" aria-describedby="emailHelp" placeholder="Enter email">
+          <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+        </div>
+        <div class="form-group">
+          <label>Password</label>
+          <input type="password" name="password" class="form-control" placeholder="Password">
+        </div>
+        <div class="form-group">
+          <label>Name</label>
+          <input type="text" class="form-control" placeholder="Enter Name" name="name">
+        </div>
+        <div class="form-group">
+          <label>Phone Number</label>
+         <input type="tel" class="form-control" placeholder="Phone Number" name="phone" pattern="[0-9]{10}" title="Please enter a 10-digit phone number">
+
+        </div>
+        <div class="form-group" align="center">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+
+    <a href="{% url 'login' %}" class="login-link">Already have an account? Login here!</a>
+</div>
+</body>
+</html>
